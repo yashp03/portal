@@ -1,178 +1,200 @@
-Systers Portal [![Build Status](https://travis-ci.org/systers/portal.svg?branch=master)](https://travis-ci.org/systers/portal) [![Coverage Status](https://coveralls.io/repos/github/systers/portal/badge.svg?branch=master)](https://coveralls.io/r/systers/portal?branch=master)
-==============
+Tutorial: Design an Azure Database for PostgreSQL using the Azure portal
+03/20/2018
+6 minutes to read
+Contributors
+Rachel Agyemang  Andrea Lam  Jason H  Alma Jenks  jan-eng all
+Azure Database for PostgreSQL is a managed service that enables you to run, manage, and scale highly available PostgreSQL databases in the cloud. Using the Azure portal, you can easily manage your server and design a database.
 
-Systers Portal is for Systers communities to post and share information within
-and with other communities.
+In this tutorial, you use the Azure portal to learn how to:
 
-Website: http://portal.systers.org
+Create an Azure Database for PostgreSQL server
+Configure the server firewall
+Use psql utility to create a database
+Load sample data
+Query data
+Update data
+Restore data
+Prerequisites
+If you don't have an Azure subscription, create a free account before you begin.
 
-Project page: http://systers.github.io/portal/
+Log in to the Azure portal
+Log in to the Azure portal.
 
+Create an Azure Database for PostgreSQL
+An Azure Database for PostgreSQL server is created with a defined set of compute and storage resources. The server is created within an Azure resource group.
 
-If you are an Outreachy Applicant, start with reading [this](https://github.com/systers/ossprojects/wiki/Systers-Portal) for meetup features, please go through [this](https://github.com/systers/ossprojects/wiki/Meetup-Features).
+Follow these steps to create an Azure Database for PostgreSQL server:
 
-Setup for developers (Unix)
----------------------------
+Click Create a resource in the upper left-hand corner of the Azure portal.
+Select Databases from the New page, and select Azure Database for PostgreSQL from the Databases page. Azure Database for PostgreSQL - Create the database
 
-1. Make sure you have installed Python 3.6, [pip3](https://pip.pypa.io/en/latest/) and [virtualenv](http://www.virtualenv.org/en/latest/).
-1. If working behind a proxy, make sure your environment variables are properly set up. If
-   you still get an error due to proxy, use "-E" flag along with "sudo" to export all the
-   environment variables.
-1. Make sure you have python3-dev installed on your operating system. For Debian, you would additionally require libpq-dev.
-   Install by using `sudo apt-get install libpq-dev python3-dev`
-1. Make sure you have PostgreSQL installed. For a tutorial on installing
-   Postgres, [Django Girls'](http://djangogirls.org) ebook,
-   [Tutorials Extension](http://djangogirls.org/resources/), is a reference.
-   The info is also on [Django Girls GitHub repository](https://github.com/DjangoGirls/tutorial-extensions/blob/master/en/optional_postgresql_installation/README.md).
-1. Clone the repo - `git clone git@github.com:systers/portal.git` and cd into
-  the `portal` directory. If working behind a proxy, follow the instructions [here](https://cms-sw.github.io/tutorial-proxy.html).
-1. Create a virtual environment with Python 3 and install dependencies:
+Fill out the new server details form with the following information:
 
-     ```bash
-     $ virtualenv venv --python=/path/to/python3
-     $ source venv/bin/activate
-     $ pip install -r requirements/dev.txt
-     $ sudo apt-get install python-gdal
-     ```
-1. Create `systersdb` database, where `systersdb` might be any suitable name.
-    ```
-    $ sudo -i -u postgres
-    $ createuser <any name e.g. alice> --pwprompt
-    $ psql
-    $ CREATE DATABASE systersdb;
-    $ \c systersdb;
-    $ GRANT ALL PRIVILEGES ON DATABASE systersdb to <the name>;
-    ```
-1. Fill in the database details in `systers_portal/settings/dev.py`.
-1. Run `export SECRET_KEY=foobarbaz` in your terminal, ideally the secret key
-  should be 40 characters long, unique and unpredictable. Optionally to set the
-  shell variable every time you activate the virtualenv, edit `venv/bin/activate`
-  and add to the bottom the export statement.
-1. Run `python systers_portal/manage.py migrate`.
-1. Run `python systers_portal/manage.py cities_light` for downloading and importing data for django-cities-light.
-1. Run `python systers_portal/manage.py createsuperuser` to create a superuser for the admin panel.
-  Fill in the details asked.
-1. Run `python systers_portal/manage.py runserver` to start the development server. When in testing
-  or production, feed the respective settings file from the command line, e.g. for
-  testing `python systers_portal/manage.py runserver --settings=systers_portal.settings.testing`.
-1. Before commiting run `flake8 systers_portal` and fix PEP8 warnings.
-1. Run `python systers_portal/manage.py test --settings=systers_portal.settings.testing`
-  to run all the tests.
+Create a server
 
+Server name: mydemoserver (name of a server maps to DNS name and is thus required to be globally unique)
+Subscription: If you have multiple subscriptions, choose the appropriate subscription in which the resource exists or is billed for.
+Resource group: myresourcegroup
+Server admin login and password of your choice
+Location
+PostgreSQL Version
+ Important
 
-If you face some issues while installing and making Portal up in your local, have a look at issues labelled as [While Setting up Portal](https://github.com/systers/portal/labels/While%20Setting%20up%20Portal).
+The server admin login and password that you specify here are required to log in to the server and its databases later in this tutorial. Remember or record this information for later use.
 
+Click Pricing tier to specify the pricing tier for your new server. For this tutorial, select General Purpose, Gen 4 compute generation, 2 vCores, 5 GB of storage and 7 days backup retention period. Select the Geographically Redundant backup redundancy option to have your server's automatic backups stored in geo-redundant storage. Azure Database for PostgreSQL - pick the pricing tier
 
-Setup for developers (Windows)
-------------------------------
+Click Ok.
 
-1. Make sure you have installed Python 3.6, make sure you the right one (32/64 bits). [Source](https://www.python.org/downloads/). During installation please pay attention to the following details :
-- Tick/Select Add Python 3.6 to PATH
-- Select Customize Installation (this is important)
-- **Tick/Select pip (others, leave as default), this is important**
-- Tick install for all users
-- Tick add Python to environment variables
-- Tick create shortcuts for installed applications
-- Precomplie standard libary
-- Select install location and hit install
-1. Run `pip install virtualenv` using windows command line
-1. You would have to install PostgreSQL. Download from [official location](https://www.postgresql.org/download/windows/) or alternative location, you could lookup some PostgreSQL tutorials online if you are completely blank on this. 
-1. Clone the repo - `git clone git@github.com:systers/portal.git` and cd into the `portal` directory. Use git CMD or git Bash(unix-like terminal) to do so.
-1. Create a virtual environment with Python 3 and install dependencies, using CMD :
- 
-     ```bash
-     $ virtualenv venv
-     $ ./venv/Scripts/activate
-     $ pip install -r requirements/dev.txt 
-     ```
-1. Create `systersdb` database, where `systersdb` might be any suitable name.
-- Open the SQL Shell for postgresql from the windows start menu or wherever accessible
+Click Create to provision the server. Provisioning takes a few minutes.
 
-    ```
-    $ Server [localhost]:  Just press enter, leave this empty
-    $ Database [postgres]: Just press enter, leave this empty
-    $ Port [5432]: This is the default port just press enter, leave this empty
-    $ Username [postgres]: This is the default username just press enter, leave this empty
-    $ Password for user postgres: Input password you created during installation and press enter
-    $ CREATE USER <anyname you want e.g systers> WITH PASSWORD 'your password';
-    $ CREATE DATABASE systersdb;
-    $ \c systersdb;
-    $ GRANT ALL PRIVILEGES ON systersdb TO <username created above>;
-    ```
-1. Fill in the database details in `systers_portal/settings/dev.py`.
-1. Run `set SECRET_KEY=foobarbaz` in your terminal, ideally the secret key
-  should be 40 characters long, unique and unpredictable. 
-1. Run `python systers_portal/manage.py migrate`.
-1. Run `python systers_portal/manage.py cities_light` for downloading and importing data for django-cities-light.
-1. Run `python systers_portal/manage.py createsuperuser` to create a superuser for the admin panel.
-  Fill in the details asked.
-1. Run `python systers_portal/manage.py runserver` to start the development server. When in testing
-  or production, feed the respective settings file from the command line, e.g. for
-  testing `python systers_portal/manage.py runserver --settings=systers_portal.settings.testing`.
-1. Before commiting run `flake8 systers_portal` and fix PEP8 warnings.
-1. Run `python systers_portal/manage.py test --settings=systers_portal.settings.testing`
-  to run all the tests.
+On the toolbar, click Notifications to monitor the deployment process. Azure Database for PostgreSQL - See notifications
 
-Congratulations! you just set up the Systers Portal on you windows dev enviroment. If you face any issues while installing and making Portal up in your local, have a look at issues labelled as [While Setting up Portal](https://github.com/systers/portal/labels/While%20Setting%20up%20Portal).
+ Tip
 
+Check the Pin to dashboard option to allow easy tracking of your deployments.
 
+By default, postgres database gets created under your server. The postgres database is a default database meant for use by users, utilities, and third-party applications.
 
+Configure a server-level firewall rule
+The Azure Database for PostgreSQL service uses a firewall at the server-level. By default, this firewall prevents all external applications and tools from connecting to the server and any databases on the server unless a firewall rule is created to open the firewall for a specific IP address range.
 
-Run Portal in a Docker container
---------------------------------
+After the deployment completes, click All Resources from the left-hand menu and type in the name mydemoserver to search for your newly created server. Click the server name listed in the search result. The Overview page for your server opens and provides options for further configuration.
 
-If you wish to view a sneak peek of the Systers Portal, you may use Docker to
-preview the Portal.
-Note: The following Docker configuration is not intended to be run in
-production at the moment. It may be configured to do so in the future.
+Azure Database for PostgreSQL - Search for server 
 
-1. Install [Docker](https://docs.docker.com/installation/).
-   Follow the installation steps for your specific operating system:
-     * Docker runs natively on a Linux-based system.
-     * For Windows and Mac OS X, you should follow instructions for installing
-       boot2docker which also installs VirtualBox.
-1. Install [docker-compose](http://docs.docker.com/compose/install/).
-   Note: fig has been deprecated. Docker-compose replaces fig.
-1. Create a new directory on your local system.
-1. Enter `git clone git@github.com:systers/portal.git` to clone the Systers
-   Portal repository. After the clone is done, change directory (cd) to the
-   `portal` directory.
-1. Run `docker-compose build`. This pulls the Docker images required to run the
-   project and installs the necessary dependencies.
-1. **This step will require the Django SECRET_KEY.**
-   Run `docker run -e SECRET_KEY=foobarbaz portal_web`.
-1. Run `docker-compose run web python systers_portal/manage.py migrate`.
-1. Run `docker-compose run web python systers_portal/manage.py cities_light` for downloading and importing data for django-cities-light.
-1. *Optional:*
-   Run `docker-compose run web python systers_portal/manage.py createsuperuser`
-   if you wish to create a superuser to access the admin panel.
-1. Run `docker-compose up` to start the webserver for the Django Systers Portal
-   project.
-1. Systers Portal should be running on port 8000.
-     * If you are on Linux, enter `http://0.0.0.0:8000` in your browser.
-     * If you are using boot2docker on Windows or Mac OS X, enter
-       `http://192.168.59.103:8000/` in your browser. If this IP address
-       doesn't work, run `boot2docker ip` from the command line and replace
-       the previous IP address in the HTTP request with the IP returned by
-       boot2docker.
+In the server page, select Connection security.
 
+Click in the text box under Rule Name, and add a new firewall rule to whitelist the IP range for connectivity. Enter your IP range. Click Save.
 
-Documentation
--------------
+Azure Database for PostgreSQL - Create Firewall Rule
 
-Documentation for Systers Portal is generated using [Sphinx](http://sphinx-doc.org/)
-and available online at http://systers-portal.readthedocs.org/
+Click Save and then click the X to close the Connections security page.
 
-To build the documentation locally run:
-```bash
-$ cd docs/
-$ make html
-```
+ Note
 
-To view the documentation open the generated `index.html` file in browser -
-`docs/_build/html/index.html`.
+Azure PostgreSQL server communicates over port 5432. If you are trying to connect from within a corporate network, outbound traffic over port 5432 may not be allowed by your network's firewall. If so, you cannot connect to your Azure SQL Database server unless your IT department opens port 5432.
 
-For more information on semantics and builds, please refer to the Sphinx
-[official documentation](http://sphinx-doc.org/contents.html).
+Get the connection information
+When you created the Azure Database for PostgreSQL server, the default postgres database was also created. To connect to your database server, you need to provide host information and access credentials.
 
-You can view the requirements document [here](docs/requirements/Systers_GSoC14_Portal_Requirements.pdf).
+From the left-hand menu in the Azure portal, click All resources and search for the server you just created.
+
+Azure Database for PostgreSQL - Search for server 
+
+Click the server name mydemoserver.
+
+Select the server's Overview page. Make a note of the Server name and Server admin login name.
+
+Azure Database for PostgreSQL - Server Admin Login
+
+Connect to PostgreSQL database using psql in Cloud Shell
+Let's now use the psql command-line utility to connect to the Azure Database for PostgreSQL server.
+
+Launch the Azure Cloud Shell via the terminal icon on the top navigation pane.
+
+Azure Database for PostgreSQL - Azure Cloud Shell terminal icon
+
+The Azure Cloud Shell opens in your browser, enabling you to type bash commands.
+
+Azure Database for PostgreSQL - Azure Shell Bash Prompt
+
+At the Cloud Shell prompt, connect to your Azure Database for PostgreSQL server using the psql commands. The following format is used to connect to an Azure Database for PostgreSQL server with the psql utility:
+
+bash
+
+Copy
+psql --host=<myserver> --port=<port> --username=<server admin login> --dbname=<database name>
+For example, the following command connects to the default database called postgres on your PostgreSQL server mydemoserver.postgres.database.azure.com using access credentials. Enter your server admin password when prompted.
+
+bash
+
+Copy
+psql --host=mydemoserver.postgres.database.azure.com --port=5432 --username=myadmin@mydemoserver --dbname=postgres
+Create a new database
+Once you're connected to the server, create a blank database at the prompt.
+
+bash
+
+Copy
+CREATE DATABASE mypgsqldb;
+At the prompt, execute the following command to switch connection to the newly created database mypgsqldb.
+
+bash
+
+Copy
+\c mypgsqldb
+Create tables in the database
+Now that you know how to connect to the Azure Database for PostgreSQL, you can complete some basic tasks:
+
+First, create a table and load it with some data. Let's create a table that tracks inventory information using this SQL code:
+
+SQL
+
+Copy
+CREATE TABLE inventory (
+    id serial PRIMARY KEY, 
+    name VARCHAR(50), 
+    quantity INTEGER
+);
+You can see the newly created table in the list of tables now by typing:
+
+SQL
+
+Copy
+\dt
+Load data into the tables
+Now that you have a table, insert some data into it. At the open command prompt window, run the following query to insert some rows of data.
+
+SQL
+
+Copy
+INSERT INTO inventory (id, name, quantity) VALUES (1, 'banana', 150); 
+INSERT INTO inventory (id, name, quantity) VALUES (2, 'orange', 154);
+You have now two rows of sample data into the inventory table you created earlier.
+
+Query and update the data in the tables
+Execute the following query to retrieve information from the inventory database table.
+
+SQL
+
+Copy
+SELECT * FROM inventory;
+You can also update the data in the table.
+
+SQL
+
+Copy
+UPDATE inventory SET quantity = 200 WHERE name = 'banana';
+You can see the updated values when you retrieve the data.
+
+SQL
+
+Copy
+SELECT * FROM inventory;
+Restore data to a previous point in time
+Imagine you have accidentally deleted this table. This situation is something you cannot easily recover from. Azure Database for PostgreSQL allows you to go back to any point-in-time for which your server has backups (determined by the backup retention period you configured) and restore this point-in-time to a new server. You can use this new server to recover your deleted data. The following steps restore the mydemoserver server to a point before the inventory table was added.
+
+On the Azure Database for PostgreSQL Overview page for your server, click Restore on the toolbar. The Restore page opens.
+
+Azure portal - Restore form options
+
+Fill out the Restore form with the required information:
+
+Azure portal - Restore form options
+
+Restore point: Select a point-in-time that occurs before the server was changed
+Target server: Provide a new server name you want to restore to
+Location: You cannot select the region, by default it is same as the source server
+Pricing tier: You cannot change this value when restoring a server. It is same as the source server.
+Click OK to restore the server to a point-in-time before the table was deleted. Restoring a server to a different point in time creates a duplicate new server as the original server as of the point in time you specify, provided that it is within the retention period for your pricing tier.
+Next steps
+In this tutorial, you learned how to use the Azure portal and other utilities to:
+
+Create an Azure Database for PostgreSQL server
+Configure the server firewall
+Use psql utility to create a database
+Load sample data
+Query data
+Update data
+Restore data
